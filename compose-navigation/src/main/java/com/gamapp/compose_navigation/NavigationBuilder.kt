@@ -1,11 +1,9 @@
-package com.gamapp.navigation
+package com.gamapp.compose_navigation
 
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.mapSaver
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 
 class NavigationBuilder {
     @PublishedApi

@@ -1,4 +1,4 @@
-package com.gamapp.navigation
+package com.gamapp.compose_navigation
 
 
 import androidx.compose.runtime.Composable
@@ -12,17 +12,19 @@ sealed class NavigateRequest {
     object PopBack : NavigateRequest()
     class NavigateTo(val navigate: Pair<String, Route>) : NavigateRequest()
 }
+
 @Composable
 fun rememberNavigator() = remember {
     Navigator()
 }
+
 class Navigator {
     @PublishedApi
     internal val navigate: Channel<NavigateRequest> = Channel()
     internal val navFlow: Flow<NavigateRequest> = navigate.receiveAsFlow()
 
     inline fun <reified T : Route> navigateTo(route: T) {
-        val nav = route.getQualifiedName() to route
+        val nav = route.getKey()
         navigate.trySend(NavigateRequest.NavigateTo(nav))
     }
 

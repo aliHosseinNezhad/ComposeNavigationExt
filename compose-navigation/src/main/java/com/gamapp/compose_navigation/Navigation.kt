@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 
 
 @Composable
@@ -17,10 +18,11 @@ fun Navigation(
     }.apply {
         setBuilder(builder)
     }
+    val saveableStateHolder = rememberSaveableStateHolder()
     LaunchedEffect(key1 = navigateBuilder, key2 = navigator) {
         navigator.navFlow.collect {
             with(navigateBuilder) {
-                it.navigate()
+                it.navigate(saveableStateHolder)
             }
         }
     }
@@ -29,7 +31,9 @@ fun Navigation(
         val key = current.first
         val route = current.second
         navigateBuilder.screens[key]?.let {
-            it(route)
+            saveableStateHolder.SaveableStateProvider(key = key) {
+                it(route)
+            }
         }
     }
     BackHandler(navigateBuilder.stack.size > 1) {

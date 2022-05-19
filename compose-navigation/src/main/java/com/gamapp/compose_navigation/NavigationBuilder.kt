@@ -2,6 +2,7 @@ package com.gamapp.compose_navigation
 
 
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.mapSaver
 
@@ -27,21 +28,24 @@ class NavigationBuilder {
         this.stack.addAll(stack)
     }
 
-    internal fun NavigateRequest.navigate(): Unit = when (this) {
-        is NavigateRequest.PopBack -> {
-            popBack()
+    internal fun NavigateRequest.navigate(saveableStateHolder: SaveableStateHolder): Unit =
+        when (this) {
+            is NavigateRequest.PopBack -> {
+                popBack(saveableStateHolder)
+            }
+            is NavigateRequest.NavigateTo -> {
+                navigate.navigateTo()
+            }
         }
-        is NavigateRequest.NavigateTo -> {
-            navigate.navigateTo()
-        }
-    }
 
     private fun Pair<String, Route>.navigateTo() {
         stack += this
     }
 
-    private fun popBack() {
-        stack.removeLastOrNull()
+    private fun popBack(saveableStateHolder: SaveableStateHolder) {
+        stack.removeLastOrNull()?.let {
+            saveableStateHolder.removeState(it.first)
+        }
     }
 
     companion object {
